@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1512</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;width:100%;overflow:hidden;background:#080C18;color:#EDE4D3;font-family:'Cormorant Garamond',serif;}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 32px;position:relative;}
+
+/* Carta náutica */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(192,123,58,0.055) 1px,transparent 1px),linear-gradient(90deg,rgba(192,123,58,0.055) 1px,transparent 1px),linear-gradient(rgba(192,123,58,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(192,123,58,0.022) 1px,transparent 1px);background-size:88px 88px,88px 88px,22px 22px,22px 22px;pointer-events:none;}
+
+/* Viñeta */
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 40%,rgba(8,12,24,0.55) 75%,rgba(8,12,24,0.92) 100%);pointer-events:none;}
+
+/* Cabecera */
+.c-head{position:absolute;top:36px;left:0;right:0;display:flex;align-items:center;justify-content:center;z-index:2;opacity:0;animation:cFadeDown 1.2s ease-out 0.4s forwards;}
+.c-hl{height:1px;width:48px;background:linear-gradient(to right,transparent,rgba(192,123,58,0.35));}
+.c-hlr{height:1px;width:48px;background:linear-gradient(to left,transparent,rgba(192,123,58,0.35));}
+.c-ht{font-family:'Cinzel',serif;font-size:9px;letter-spacing:6px;color:#7A6448;text-transform:uppercase;padding:0 20px;}
+
+/* Número */
+.c-numwrap{position:relative;z-index:2;opacity:0;animation:cFadeIn 1.6s ease-out 0.8s forwards;}
+.c-ghost{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Cinzel',serif;font-size:clamp(180px,28vw,340px);font-weight:900;color:#C07B3A;opacity:0.04;letter-spacing:-6px;white-space:nowrap;pointer-events:none;user-select:none;}
+.c-num{font-family:'Cinzel',serif;font-size:clamp(72px,14vw,160px);font-weight:900;color:#EDE4D3;letter-spacing:clamp(4px,2vw,20px);line-height:1;position:relative;z-index:1;text-shadow:0 0 80px rgba(192,123,58,0.08);}
+
+/* Club name */
+.c-name{margin-top:20px;z-index:2;font-family:'Cinzel',serif;font-size:clamp(10px,1.4vw,14px);letter-spacing:clamp(4px,1.5vw,10px);color:rgba(237,228,211,0.45);text-transform:uppercase;text-align:center;opacity:0;animation:cFadeIn 1.4s ease-out 1.4s forwards;}
+
+/* Divisor */
+.c-div{display:flex;align-items:center;gap:16px;margin:32px 0;z-index:2;opacity:0;animation:cFadeIn 1.2s ease-out 1.8s forwards;}
+.c-dl{width:56px;height:1px;background:linear-gradient(to right,transparent,rgba(192,123,58,0.3));}
+.c-dlr{width:56px;height:1px;background:linear-gradient(to left,transparent,rgba(192,123,58,0.3));}
+.c-dd{width:5px;height:5px;background:#C07B3A;opacity:0.6;transform:rotate(45deg);}
+
+/* Form */
+.c-fwrap{width:100%;max-width:380px;z-index:2;opacity:0;animation:cFadeUp 1.4s ease-out 2.1s forwards;}
+.c-flabel{font-family:'Cinzel',serif;font-size:9px;letter-spacing:5px;color:#7A6448;text-transform:uppercase;text-align:center;display:block;margin-bottom:22px;}
+.c-field{position:relative;border-bottom:1px solid rgba(192,123,58,0.18);transition:border-color 0.4s;}
+.c-field:first-child{border-top:1px solid rgba(192,123,58,0.18);}
+.c-field::after{content:'';position:absolute;bottom:-1px;left:0;width:0;height:1px;background:#C07B3A;transition:width 0.5s ease;}
+.c-field:focus-within::after{width:100%;}
+.c-field input,.c-field select{width:100%;background:transparent;border:none;outline:none;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:300;color:#EDE4D3;padding:16px 0;letter-spacing:0.5px;-webkit-appearance:none;}
+.c-field select option{background:#0D1525;color:#EDE4D3;}
+.c-field input::placeholder{color:rgba(237,228,211,0.3);font-style:italic;}
+.c-field select{color:rgba(237,228,211,0.35);}
+.c-field select.filled{color:#EDE4D3;}
+
+/* Botón */
+.c-btnwrap{margin-top:28px;display:flex;justify-content:center;}
+.c-btn{background:transparent;border:none;outline:none;cursor:pointer;padding:0;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.c-btn-t{font-family:'Cinzel',serif;font-size:9px;letter-spacing:6px;color:#7A6448;text-transform:uppercase;transition:color 0.4s;}
+.c-btn-l{width:0;height:1px;background:#C07B3A;transition:width 0.6s ease;}
+.c-btn:hover .c-btn-t{color:#C07B3A;}
+.c-btn:hover .c-btn-l{width:48px;}
+
+/* Éxito */
+.c-ok{display:none;text-align:center;padding:8px 0;}
+.c-ok.show{display:block;}
+.c-ok-num{font-family:'Cinzel',serif;font-size:10px;letter-spacing:5px;color:#C07B3A;text-transform:uppercase;margin-bottom:12px;display:block;}
+.c-ok p{font-size:14px;font-style:italic;color:rgba(237,228,211,0.45);line-height:1.7;}
+
+/* Footer */
+.c-foot{position:absolute;bottom:32px;left:0;right:0;display:flex;justify-content:center;z-index:2;opacity:0;animation:cFadeIn 1.2s ease-out 2.8s forwards;}
+.c-foot span{font-family:'Cinzel',serif;font-size:8px;letter-spacing:4px;color:rgba(122,100,72,0.4);text-transform:uppercase;}
+
+/* Rosa */
+.c-compass{position:absolute;bottom:48px;right:52px;width:72px;height:72px;z-index:2;pointer-events:none;opacity:0.1;animation:cSpin 120s linear 3s infinite;}
+@keyframes cSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+/* Animaciones */
+@keyframes cFadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes cFadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes cFadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+
+/* Canvas partículas */
+#c-canvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.35;}
+
+@media(max-width:520px){.c-fwrap{max-width:100%;padding:0 4px;}.c-compass{display:none;}}
+@media(max-height:600px){.c-div{margin:16px 0;}.c-name{margin-top:10px;}}
+</style>
+</head>
+<body>
+
+<canvas id="c-canvas"></canvas>
+
+<div class="c-head">
+  <div class="c-hl"></div>
+  <span class="c-ht">club privado de inversión</span>
+  <div class="c-hlr"></div>
+</div>
+
+<div class="c-numwrap">
+  <div class="c-ghost" aria-hidden="true">1512</div>
+  <div class="c-num">1512</div>
+</div>
+
+<p class="c-name">Madrid &nbsp;·&nbsp; MMXXVI</p>
+
+<div class="c-div">
+  <div class="c-dl"></div>
+  <div class="c-dd"></div>
+  <div class="c-dlr"></div>
+</div>
+
+<div class="c-fwrap">
+  <span class="c-flabel">· Solicitud de Registro ·</span>
+  <div id="c-form-wrap">
+    <form id="c-form" onsubmit="cSubmit(event)" novalidate>
+      <div class="c-field">
+        <input type="text" id="c-name" placeholder="Nombre" autocomplete="off" required/>
+      </div>
+      <div class="c-field">
+        <input type="email" id="c-email" placeholder="Correo electrónico" autocomplete="off" required/>
+      </div>
+      <div class="c-field">
+        <input type="tel" id="c-phone" placeholder="Teléfono (opcional)" autocomplete="off"/>
+      </div>
+      <div class="c-field">
+        <select id="c-country" onchange="this.classList.add('filled')">
+          <option value="" disabled selected>País de residencia</option>
+          <option>España</option>
+          <option>República Dominicana</option>
+          <option>México</option>
+          <option>Colombia</option>
+          <option>Panamá</option>
+          <option>Venezuela</option>
+          <option>Argentina</option>
+          <option>Chile</option>
+          <option>Estados Unidos</option>
+          <option>Otro</option>
+        </select>
+      </div>
+      <div class="c-btnwrap">
+        <button type="submit" class="c-btn">
+          <span class="c-btn-t">Enviar</span>
+          <div class="c-btn-l"></div>
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="c-ok" id="c-ok">
+    <span class="c-ok-num">· 1512 ·</span>
+    <p>Nos pondremos en contacto<br>cuando sea oportuno.</p>
+  </div>
+</div>
+
+<svg class="c-compass" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="40" cy="40" r="38" fill="none" stroke="rgba(192,123,58,0.6)" stroke-width="0.8"/>
+  <polygon points="40,3 42.5,37 37.5,37" fill="#C07B3A"/>
+  <polygon points="40,77 42.5,43 37.5,43" fill="#7A6448" opacity="0.8"/>
+  <polygon points="77,40 43,37.5 43,42.5" fill="#C07B3A" opacity="0.9"/>
+  <polygon points="3,40 37,37.5 37,42.5" fill="#7A6448" opacity="0.8"/>
+  <polygon points="40,3 41.8,24 38.2,24" fill="#D4894A" opacity="0.5" transform="rotate(45 40 40)"/>
+  <polygon points="40,3 41.8,24 38.2,24" fill="#D4894A" opacity="0.35" transform="rotate(135 40 40)"/>
+  <polygon points="40,3 41.8,24 38.2,24" fill="#D4894A" opacity="0.35" transform="rotate(225 40 40)"/>
+  <polygon points="40,3 41.8,24 38.2,24" fill="#D4894A" opacity="0.35" transform="rotate(315 40 40)"/>
+  <circle cx="40" cy="40" r="3.5" fill="#C07B3A"/>
+  <circle cx="40" cy="40" r="1.8" fill="#080C18"/>
+  <text x="40" y="13" text-anchor="middle" fill="#C07B3A" font-family="serif" font-size="5.5" font-weight="bold">N</text>
+</svg>
+
+<div class="c-foot"><span>www.club1512.com</span></div>
+
+<script>
+// Partículas
+(function(){
+  var cv=document.getElementById('c-canvas');
+  var ctx=cv.getContext('2d');
+  var W,H,pts=[];
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+  for(var i=0;i<55;i++) pts.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:Math.random()*1+0.3,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.08,o:Math.random()*.2+.04,d:(Math.random()-.5)*.002});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;p.o+=p.d;
+      if(p.o<=0.02||p.o>=0.28)p.d*=-1;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(192,123,58,'+p.o+')';ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// Formulario
+function cSubmit(e){
+  e.preventDefault();
+  var name=document.getElementById('c-name').value.trim();
+  var email=document.getElementById('c-email').value.trim();
+  if(!name||!email){
+    if(!name) cPulse(document.getElementById('c-name').parentElement);
+    if(!email) cPulse(document.getElementById('c-email').parentElement);
+    return;
+  }
+  var fw=document.getElementById('c-form-wrap');
+  fw.style.transition='opacity 0.6s ease';
+  fw.style.opacity='0';
+  setTimeout(function(){
+    fw.style.display='none';
+    var ok=document.getElementById('c-ok');
+    ok.classList.add('show');
+    ok.style.opacity='0';
+    ok.style.transition='opacity 0.8s ease';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){ok.style.opacity='1';});});
+  },600);
+}
+function cPulse(el){
+  el.style.transition='border-color 0.15s';
+  el.style.borderBottomColor='rgba(192,123,58,0.8)';
+  setTimeout(function(){el.style.borderBottomColor='';},500);
+}
+</script>
+</body>
+</html>
