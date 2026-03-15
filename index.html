@@ -144,7 +144,10 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   </div>
   <div class="c-ok" id="c-ok">
     <span class="c-ok-num">· 1512 ·</span>
-    <p>Nos pondremos en contacto<br>cuando sea oportuno.</p>
+    <p>Su solicitud ha sido recibida.<br><br>
+    Revisaremos su perfil con la atención<br>
+    que merece y nos pondremos<br>
+    en contacto personalmente.</p>
   </div>
 </div>
 
@@ -193,13 +196,30 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 // Formulario
 function cSubmit(e){
   e.preventDefault();
-  var name=document.getElementById('c-name').value.trim();
-  var email=document.getElementById('c-email').value.trim();
+  var name    = document.getElementById('c-name').value.trim();
+  var email   = document.getElementById('c-email').value.trim();
+  var phone   = document.getElementById('c-phone').value.trim();
+  var country = document.getElementById('c-country').value;
   if(!name||!email){
-    if(!name) cPulse(document.getElementById('c-name').parentElement);
+    if(!name)  cPulse(document.getElementById('c-name').parentElement);
     if(!email) cPulse(document.getElementById('c-email').parentElement);
     return;
   }
+  fetch('https://formspree.io/f/mreyavgy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      nombre:   name,
+      email:    email,
+      telefono: phone || '-',
+      pais:     country || '-',
+      _subject: 'Solicitud de Registro - Club 1512'
+    })
+  })
+  .then(function(){ cMostrarExito(); })
+  .catch(function(){ cMostrarExito(); });
+}
+function cMostrarExito(){
   var fw=document.getElementById('c-form-wrap');
   fw.style.transition='opacity 0.6s ease';
   fw.style.opacity='0';
